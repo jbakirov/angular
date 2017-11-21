@@ -6,16 +6,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var core_1 = require("@angular/core");
-var AppComponent = (function () {
-    function AppComponent() {
+var NavBarComponent = (function () {
+    function NavBarComponent() {
     }
-    return AppComponent;
+    return NavBarComponent;
 }());
-AppComponent = __decorate([
+NavBarComponent = __decorate([
     core_1.Component({
-        selector: 'my-app',
-        template: '<h1>My First Angular2 App</h1><navbar></navbar>'
+        selector: 'navbar',
+        template: '<div>Nav Bar</div>'
     })
-], AppComponent);
-exports.AppComponent = AppComponent;
-//# sourceMappingURL=app.component.js.map
+], NavBarComponent);
+exports.NavBarComponent = NavBarComponent;
+//# sourceMappingURL=navbar.component.js.map
