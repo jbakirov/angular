@@ -5,8 +5,15 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { ChangeDetectionStrategy, SchemaMetadata, Type, ViewEncapsulation } from '@angular/core';
-import { LifecycleHooks } from './private_import_core';
+import { ChangeDetectionStrategy, SchemaMetadata, ViewEncapsulation } from '@angular/core';
+import { LifecycleHooks } from '../core_private';
+import { Type } from './facade/lang';
+export declare abstract class CompileMetadataWithIdentifier {
+    identifier: CompileIdentifierMetadata;
+    runtimeCacheKey: any;
+    assetCacheKey: any;
+    equalsTo(id2: CompileMetadataWithIdentifier): boolean;
+}
 export declare class CompileAnimationEntryMetadata {
     name: string;
     definitions: CompileAnimationStateMetadata[];
@@ -54,69 +61,141 @@ export declare class CompileAnimationSequenceMetadata extends CompileAnimationWi
 export declare class CompileAnimationGroupMetadata extends CompileAnimationWithStepsMetadata {
     constructor(steps?: CompileAnimationMetadata[]);
 }
-export declare function identifierName(compileIdentifier: CompileIdentifierMetadata): string;
-export declare function identifierModuleUrl(compileIdentifier: CompileIdentifierMetadata): string;
-export interface CompileIdentifierMetadata {
-    reference: any;
+export declare class CompileIdentifierMetadata implements CompileMetadataWithIdentifier {
+    runtime: any;
+    name: string;
+    prefix: string;
+    moduleUrl: string;
+    value: any;
+    private _assetCacheKey;
+    constructor({runtime, name, moduleUrl, prefix, value}?: {
+        runtime?: any;
+        name?: string;
+        moduleUrl?: string;
+        prefix?: string;
+        value?: any;
+    });
+    identifier: CompileIdentifierMetadata;
+    runtimeCacheKey: any;
+    assetCacheKey: any;
+    equalsTo(id2: CompileIdentifierMetadata): boolean;
 }
-export declare enum CompileSummaryKind {
-    Pipe = 0,
-    Directive = 1,
-    NgModule = 2,
-    Injectable = 3,
+export declare class CompileDiDependencyMetadata {
+    isAttribute: boolean;
+    isSelf: boolean;
+    isHost: boolean;
+    isSkipSelf: boolean;
+    isOptional: boolean;
+    isValue: boolean;
+    query: CompileQueryMetadata;
+    viewQuery: CompileQueryMetadata;
+    token: CompileTokenMetadata;
+    value: any;
+    constructor({isAttribute, isSelf, isHost, isSkipSelf, isOptional, isValue, query, viewQuery, token, value}?: {
+        isAttribute?: boolean;
+        isSelf?: boolean;
+        isHost?: boolean;
+        isSkipSelf?: boolean;
+        isOptional?: boolean;
+        isValue?: boolean;
+        query?: CompileQueryMetadata;
+        viewQuery?: CompileQueryMetadata;
+        token?: CompileTokenMetadata;
+        value?: any;
+    });
+}
+export declare class CompileProviderMetadata {
+    token: CompileTokenMetadata;
+    useClass: CompileTypeMetadata;
+    useValue: any;
+    useExisting: CompileTokenMetadata;
+    useFactory: CompileFactoryMetadata;
+    deps: CompileDiDependencyMetadata[];
+    multi: boolean;
+    constructor({token, useClass, useValue, useExisting, useFactory, deps, multi}: {
+        token?: CompileTokenMetadata;
+        useClass?: CompileTypeMetadata;
+        useValue?: any;
+        useExisting?: CompileTokenMetadata;
+        useFactory?: CompileFactoryMetadata;
+        deps?: CompileDiDependencyMetadata[];
+        multi?: boolean;
+    });
+}
+export declare class CompileFactoryMetadata extends CompileIdentifierMetadata {
+    diDeps: CompileDiDependencyMetadata[];
+    constructor({runtime, name, moduleUrl, prefix, diDeps, value}: {
+        runtime?: Function;
+        name?: string;
+        prefix?: string;
+        moduleUrl?: string;
+        value?: boolean;
+        diDeps?: CompileDiDependencyMetadata[];
+    });
+}
+export declare class CompileTokenMetadata implements CompileMetadataWithIdentifier {
+    value: any;
+    identifier: CompileIdentifierMetadata;
+    identifierIsInstance: boolean;
+    constructor({value, identifier, identifierIsInstance}: {
+        value?: any;
+        identifier?: CompileIdentifierMetadata;
+        identifierIsInstance?: boolean;
+    });
+    runtimeCacheKey: any;
+    assetCacheKey: any;
+    equalsTo(token2: CompileTokenMetadata): boolean;
+    name: string;
 }
 /**
- * A CompileSummary is the data needed to use a directive / pipe / module
- * in other modules / components. However, this data is not enough to compile
- * the directive / module itself.
+ * Note: We only need this in places where we need to support identifiers that
+ * don't have a `runtime` value given by the `StaticReflector`. E.g. see the `identifiers`
+ * file where we have some identifiers hard coded by name/module path.
+ *
+ * TODO(tbosch): Eventually, all of these places should go through the static reflector
+ * as well, providing them with a valid `StaticSymbol` that is again a singleton.
  */
-export interface CompileTypeSummary {
-    summaryKind: CompileSummaryKind;
-    type: CompileTypeMetadata;
-}
-export interface CompileDiDependencyMetadata {
-    isAttribute?: boolean;
-    isSelf?: boolean;
-    isHost?: boolean;
-    isSkipSelf?: boolean;
-    isOptional?: boolean;
-    isValue?: boolean;
-    token?: CompileTokenMetadata;
-    value?: any;
-}
-export interface CompileProviderMetadata {
-    token: CompileTokenMetadata;
-    useClass?: CompileTypeMetadata;
-    useValue?: any;
-    useExisting?: CompileTokenMetadata;
-    useFactory?: CompileFactoryMetadata;
-    deps?: CompileDiDependencyMetadata[];
-    multi?: boolean;
-}
-export interface CompileFactoryMetadata extends CompileIdentifierMetadata {
-    diDeps: CompileDiDependencyMetadata[];
-    reference: any;
-}
-export declare function tokenName(token: CompileTokenMetadata): string;
-export declare function tokenReference(token: CompileTokenMetadata): any;
-export interface CompileTokenMetadata {
-    value?: any;
-    identifier?: CompileIdentifierMetadata | CompileTypeMetadata;
+export declare class CompileIdentifierMap<KEY extends CompileMetadataWithIdentifier, VALUE> {
+    private _valueMap;
+    private _values;
+    private _tokens;
+    add(token: KEY, value: VALUE): void;
+    get(token: KEY): VALUE;
+    keys(): KEY[];
+    values(): VALUE[];
+    size: number;
 }
 /**
  * Metadata regarding compilation of a type.
  */
-export interface CompileTypeMetadata extends CompileIdentifierMetadata {
+export declare class CompileTypeMetadata extends CompileIdentifierMetadata {
+    isHost: boolean;
     diDeps: CompileDiDependencyMetadata[];
     lifecycleHooks: LifecycleHooks[];
-    reference: any;
+    constructor({runtime, name, moduleUrl, prefix, isHost, value, diDeps, lifecycleHooks}?: {
+        runtime?: Type;
+        name?: string;
+        moduleUrl?: string;
+        prefix?: string;
+        isHost?: boolean;
+        value?: any;
+        diDeps?: CompileDiDependencyMetadata[];
+        lifecycleHooks?: LifecycleHooks[];
+    });
 }
-export interface CompileQueryMetadata {
+export declare class CompileQueryMetadata {
     selectors: Array<CompileTokenMetadata>;
     descendants: boolean;
     first: boolean;
     propertyName: string;
     read: CompileTokenMetadata;
+    constructor({selectors, descendants, first, propertyName, read}?: {
+        selectors?: Array<CompileTokenMetadata>;
+        descendants?: boolean;
+        first?: boolean;
+        propertyName?: string;
+        read?: CompileTokenMetadata;
+    });
 }
 /**
  * Metadata about a stylesheet
@@ -130,14 +209,6 @@ export declare class CompileStylesheetMetadata {
         styles?: string[];
         styleUrls?: string[];
     });
-}
-/**
- * Summary Metadata regarding compilation of a template.
- */
-export interface CompileTemplateSummary {
-    animations: string[];
-    ngContentSelectors: string[];
-    encapsulation: ViewEncapsulation;
 }
 /**
  * Metadata regarding compilation of a template.
@@ -163,41 +234,12 @@ export declare class CompileTemplateMetadata {
         animations?: CompileAnimationEntryMetadata[];
         interpolation?: [string, string];
     });
-    toSummary(): CompileTemplateSummary;
-}
-export interface CompileDirectiveSummary extends CompileTypeSummary {
-    type: CompileTypeMetadata;
-    isComponent: boolean;
-    selector: string;
-    exportAs: string;
-    inputs: {
-        [key: string]: string;
-    };
-    outputs: {
-        [key: string]: string;
-    };
-    hostListeners: {
-        [key: string]: string;
-    };
-    hostProperties: {
-        [key: string]: string;
-    };
-    hostAttributes: {
-        [key: string]: string;
-    };
-    providers: CompileProviderMetadata[];
-    viewProviders: CompileProviderMetadata[];
-    queries: CompileQueryMetadata[];
-    entryComponents: CompileIdentifierMetadata[];
-    changeDetection: ChangeDetectionStrategy;
-    template: CompileTemplateSummary;
 }
 /**
  * Metadata regarding compilation of a directive.
  */
-export declare class CompileDirectiveMetadata {
-    static create({isHost, type, isComponent, selector, exportAs, changeDetection, inputs, outputs, host, providers, viewProviders, queries, viewQueries, entryComponents, template}?: {
-        isHost?: boolean;
+export declare class CompileDirectiveMetadata implements CompileMetadataWithIdentifier {
+    static create({type, isComponent, selector, exportAs, changeDetection, inputs, outputs, host, providers, viewProviders, queries, viewQueries, entryComponents, viewDirectives, viewPipes, template}?: {
         type?: CompileTypeMetadata;
         isComponent?: boolean;
         selector?: string;
@@ -208,14 +250,15 @@ export declare class CompileDirectiveMetadata {
         host?: {
             [key: string]: string;
         };
-        providers?: CompileProviderMetadata[];
-        viewProviders?: CompileProviderMetadata[];
+        providers?: Array<CompileProviderMetadata | CompileTypeMetadata | CompileIdentifierMetadata | any[]>;
+        viewProviders?: Array<CompileProviderMetadata | CompileTypeMetadata | CompileIdentifierMetadata | any[]>;
         queries?: CompileQueryMetadata[];
         viewQueries?: CompileQueryMetadata[];
-        entryComponents?: CompileIdentifierMetadata[];
+        entryComponents?: CompileTypeMetadata[];
+        viewDirectives?: CompileTypeMetadata[];
+        viewPipes?: CompileTypeMetadata[];
         template?: CompileTemplateMetadata;
     }): CompileDirectiveMetadata;
-    isHost: boolean;
     type: CompileTypeMetadata;
     isComponent: boolean;
     selector: string;
@@ -240,10 +283,11 @@ export declare class CompileDirectiveMetadata {
     viewProviders: CompileProviderMetadata[];
     queries: CompileQueryMetadata[];
     viewQueries: CompileQueryMetadata[];
-    entryComponents: CompileIdentifierMetadata[];
+    entryComponents: CompileTypeMetadata[];
+    viewDirectives: CompileTypeMetadata[];
+    viewPipes: CompileTypeMetadata[];
     template: CompileTemplateMetadata;
-    constructor({isHost, type, isComponent, selector, exportAs, changeDetection, inputs, outputs, hostListeners, hostProperties, hostAttributes, providers, viewProviders, queries, viewQueries, entryComponents, template}?: {
-        isHost?: boolean;
+    constructor({type, isComponent, selector, exportAs, changeDetection, inputs, outputs, hostListeners, hostProperties, hostAttributes, providers, viewProviders, queries, viewQueries, entryComponents, viewDirectives, viewPipes, template}?: {
         type?: CompileTypeMetadata;
         isComponent?: boolean;
         selector?: string;
@@ -264,25 +308,25 @@ export declare class CompileDirectiveMetadata {
         hostAttributes?: {
             [key: string]: string;
         };
-        providers?: CompileProviderMetadata[];
-        viewProviders?: CompileProviderMetadata[];
+        providers?: Array<CompileProviderMetadata | CompileTypeMetadata | CompileIdentifierMetadata | any[]>;
+        viewProviders?: Array<CompileProviderMetadata | CompileTypeMetadata | CompileIdentifierMetadata | any[]>;
         queries?: CompileQueryMetadata[];
         viewQueries?: CompileQueryMetadata[];
-        entryComponents?: CompileIdentifierMetadata[];
+        entryComponents?: CompileTypeMetadata[];
+        viewDirectives?: CompileTypeMetadata[];
+        viewPipes?: CompileTypeMetadata[];
         template?: CompileTemplateMetadata;
     });
-    toSummary(): CompileDirectiveSummary;
+    identifier: CompileIdentifierMetadata;
+    runtimeCacheKey: any;
+    assetCacheKey: any;
+    equalsTo(other: CompileMetadataWithIdentifier): boolean;
 }
 /**
  * Construct {@link CompileDirectiveMetadata} from {@link ComponentTypeMetadata} and a selector.
  */
-export declare function createHostComponentMeta(typeReference: any, compMeta: CompileDirectiveMetadata): CompileDirectiveMetadata;
-export interface CompilePipeSummary extends CompileTypeSummary {
-    type: CompileTypeMetadata;
-    name: string;
-    pure: boolean;
-}
-export declare class CompilePipeMetadata {
+export declare function createHostComponentMeta(compMeta: CompileDirectiveMetadata): CompileDirectiveMetadata;
+export declare class CompilePipeMetadata implements CompileMetadataWithIdentifier {
     type: CompileTypeMetadata;
     name: string;
     pure: boolean;
@@ -291,92 +335,59 @@ export declare class CompilePipeMetadata {
         name?: string;
         pure?: boolean;
     });
-    toSummary(): CompilePipeSummary;
-}
-export interface CompileNgModuleSummary extends CompileTypeSummary {
-    type: CompileTypeMetadata;
-    exportedDirectives: CompileIdentifierMetadata[];
-    exportedPipes: CompileIdentifierMetadata[];
-    entryComponents: CompileIdentifierMetadata[];
-    providers: {
-        provider: CompileProviderMetadata;
-        module: CompileIdentifierMetadata;
-    }[];
-    modules: CompileTypeMetadata[];
+    identifier: CompileIdentifierMetadata;
+    runtimeCacheKey: any;
+    assetCacheKey: any;
+    equalsTo(other: CompileMetadataWithIdentifier): boolean;
 }
 /**
- * Metadata regarding compilation of a module.
+ * Metadata regarding compilation of a directive.
  */
-export declare class CompileNgModuleMetadata {
+export declare class CompileNgModuleMetadata implements CompileMetadataWithIdentifier {
     type: CompileTypeMetadata;
-    declaredDirectives: CompileIdentifierMetadata[];
-    exportedDirectives: CompileIdentifierMetadata[];
-    declaredPipes: CompileIdentifierMetadata[];
-    exportedPipes: CompileIdentifierMetadata[];
-    entryComponents: CompileIdentifierMetadata[];
-    bootstrapComponents: CompileIdentifierMetadata[];
+    declaredDirectives: CompileDirectiveMetadata[];
+    exportedDirectives: CompileDirectiveMetadata[];
+    declaredPipes: CompilePipeMetadata[];
+    exportedPipes: CompilePipeMetadata[];
+    entryComponents: CompileTypeMetadata[];
+    bootstrapComponents: CompileTypeMetadata[];
     providers: CompileProviderMetadata[];
-    importedModules: CompileNgModuleSummary[];
-    exportedModules: CompileNgModuleSummary[];
+    importedModules: CompileNgModuleMetadata[];
+    exportedModules: CompileNgModuleMetadata[];
     schemas: SchemaMetadata[];
-    id: string;
     transitiveModule: TransitiveCompileNgModuleMetadata;
-    constructor({type, providers, declaredDirectives, exportedDirectives, declaredPipes, exportedPipes, entryComponents, bootstrapComponents, importedModules, exportedModules, schemas, transitiveModule, id}?: {
+    constructor({type, providers, declaredDirectives, exportedDirectives, declaredPipes, exportedPipes, entryComponents, bootstrapComponents, importedModules, exportedModules, schemas, transitiveModule}?: {
         type?: CompileTypeMetadata;
-        providers?: CompileProviderMetadata[];
-        declaredDirectives?: CompileIdentifierMetadata[];
-        exportedDirectives?: CompileIdentifierMetadata[];
-        declaredPipes?: CompileIdentifierMetadata[];
-        exportedPipes?: CompileIdentifierMetadata[];
-        entryComponents?: CompileIdentifierMetadata[];
-        bootstrapComponents?: CompileIdentifierMetadata[];
-        importedModules?: CompileNgModuleSummary[];
-        exportedModules?: CompileNgModuleSummary[];
+        providers?: Array<CompileProviderMetadata | CompileTypeMetadata | CompileIdentifierMetadata | any[]>;
+        declaredDirectives?: CompileDirectiveMetadata[];
+        exportedDirectives?: CompileDirectiveMetadata[];
+        declaredPipes?: CompilePipeMetadata[];
+        exportedPipes?: CompilePipeMetadata[];
+        entryComponents?: CompileTypeMetadata[];
+        bootstrapComponents?: CompileTypeMetadata[];
+        importedModules?: CompileNgModuleMetadata[];
+        exportedModules?: CompileNgModuleMetadata[];
         transitiveModule?: TransitiveCompileNgModuleMetadata;
         schemas?: SchemaMetadata[];
-        id?: string;
     });
-    toSummary(): CompileNgModuleSummary;
+    identifier: CompileIdentifierMetadata;
+    runtimeCacheKey: any;
+    assetCacheKey: any;
+    equalsTo(other: CompileMetadataWithIdentifier): boolean;
 }
 export declare class TransitiveCompileNgModuleMetadata {
-    directivesSet: Set<any>;
-    directives: CompileIdentifierMetadata[];
-    exportedDirectivesSet: Set<any>;
-    exportedDirectives: CompileIdentifierMetadata[];
-    pipesSet: Set<any>;
-    pipes: CompileIdentifierMetadata[];
-    exportedPipesSet: Set<any>;
-    exportedPipes: CompileIdentifierMetadata[];
-    modulesSet: Set<any>;
-    modules: CompileTypeMetadata[];
-    entryComponentsSet: Set<any>;
-    entryComponents: CompileIdentifierMetadata[];
-    providers: {
-        provider: CompileProviderMetadata;
-        module: CompileIdentifierMetadata;
-    }[];
-    addProvider(provider: CompileProviderMetadata, module: CompileIdentifierMetadata): void;
-    addDirective(id: CompileIdentifierMetadata): void;
-    addExportedDirective(id: CompileIdentifierMetadata): void;
-    addPipe(id: CompileIdentifierMetadata): void;
-    addExportedPipe(id: CompileIdentifierMetadata): void;
-    addModule(id: CompileTypeMetadata): void;
-    addEntryComponent(id: CompileIdentifierMetadata): void;
+    modules: CompileNgModuleMetadata[];
+    providers: CompileProviderMetadata[];
+    entryComponents: CompileTypeMetadata[];
+    directives: CompileDirectiveMetadata[];
+    pipes: CompilePipeMetadata[];
+    directivesSet: Set<Type>;
+    pipesSet: Set<Type>;
+    constructor(modules: CompileNgModuleMetadata[], providers: CompileProviderMetadata[], entryComponents: CompileTypeMetadata[], directives: CompileDirectiveMetadata[], pipes: CompilePipeMetadata[]);
 }
-export declare class ProviderMeta {
-    token: any;
-    useClass: Type<any>;
-    useValue: any;
-    useExisting: any;
-    useFactory: Function;
-    dependencies: Object[];
-    multi: boolean;
-    constructor(token: any, {useClass, useValue, useExisting, useFactory, deps, multi}: {
-        useClass?: Type<any>;
-        useValue?: any;
-        useExisting?: any;
-        useFactory?: Function;
-        deps?: Object[];
-        multi?: boolean;
-    });
+export declare function removeIdentifierDuplicates<T extends CompileMetadataWithIdentifier>(items: T[]): T[];
+export declare function isStaticSymbol(value: any): value is StaticSymbol;
+export interface StaticSymbol {
+    name: string;
+    filePath: string;
 }

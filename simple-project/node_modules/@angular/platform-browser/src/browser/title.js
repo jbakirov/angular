@@ -5,7 +5,8 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { getDOM } from '../dom/dom_adapter';
+"use strict";
+var dom_adapter_1 = require('../dom/dom_adapter');
 /**
  * A service that can be used to get and set the title of a current HTML document.
  *
@@ -14,22 +15,22 @@ import { getDOM } from '../dom/dom_adapter';
  * (representing the `<title>` tag). Instead, this service can be used to set and get the current
  * title value.
  *
- * \@experimental
+ * @experimental
  */
-export var Title = (function () {
+var Title = (function () {
     function Title() {
     }
     /**
      * Get the title of the current HTML document.
-     * @return {?}
+     * @returns {string}
      */
-    Title.prototype.getTitle = function () { return getDOM().getTitle(); };
+    Title.prototype.getTitle = function () { return dom_adapter_1.getDOM().getTitle(); };
     /**
      * Set the title of the current HTML document.
-     * @param {?} newTitle
-     * @return {?}
+     * @param newTitle
      */
-    Title.prototype.setTitle = function (newTitle) { getDOM().setTitle(newTitle); };
+    Title.prototype.setTitle = function (newTitle) { dom_adapter_1.getDOM().setTitle(newTitle); };
     return Title;
 }());
+exports.Title = Title;
 //# sourceMappingURL=title.js.map

@@ -5,36 +5,22 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { Injectable } from './metadata';
-export var OpaqueToken = (function () {
-    /**
-     * @param {?} _desc
-     */
+"use strict";
+var decorators_1 = require('./decorators'); // so that metadata is gathered for this class
+var OpaqueToken = (function () {
     function OpaqueToken(_desc) {
         this._desc = _desc;
     }
-    /**
-     * @return {?}
-     */
     OpaqueToken.prototype.toString = function () { return "Token " + this._desc; };
+    /** @nocollapse */
     OpaqueToken.decorators = [
-        { type: Injectable },
+        { type: decorators_1.Injectable },
     ];
     /** @nocollapse */
-    OpaqueToken.ctorParameters = function () { return [
+    OpaqueToken.ctorParameters = [
         null,
-    ]; };
+    ];
     return OpaqueToken;
 }());
-function OpaqueToken_tsickle_Closure_declarations() {
-    /** @type {?} */
-    OpaqueToken.decorators;
-    /**
-     * @nocollapse
-     * @type {?}
-     */
-    OpaqueToken.ctorParameters;
-    /** @type {?} */
-    OpaqueToken.prototype._desc;
-}
+exports.OpaqueToken = OpaqueToken;
 //# sourceMappingURL=opaque_token.js.map

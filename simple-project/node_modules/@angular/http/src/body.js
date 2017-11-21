@@ -5,65 +5,59 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { stringToArrayBuffer } from './http_utils';
-import { URLSearchParams } from './url_search_params';
+"use strict";
+var lang_1 = require('../src/facade/lang');
+var http_utils_1 = require('./http_utils');
+var url_search_params_1 = require('./url_search_params');
 /**
- * HTTP request body used by both {\@link Request} and {\@link Response}
+ * HTTP request body used by both {@link Request} and {@link Response}
  * https://fetch.spec.whatwg.org/#body
- * @abstract
  */
-export var Body = (function () {
+var Body = (function () {
     function Body() {
     }
     /**
      * Attempts to return body as parsed `JSON` object, or raises an exception.
-     * @return {?}
      */
     Body.prototype.json = function () {
-        if (typeof this._body === 'string') {
-            return JSON.parse(/** @type {?} */ (this._body));
+        if (lang_1.isString(this._body)) {
+            return lang_1.Json.parse(this._body);
         }
         if (this._body instanceof ArrayBuffer) {
-            return JSON.parse(this.text());
+            return lang_1.Json.parse(this.text());
         }
         return this._body;
     };
     /**
      * Returns the body as a string, presuming `toString()` can be called on the response body.
-     * @return {?}
      */
     Body.prototype.text = function () {
-        if (this._body instanceof URLSearchParams) {
+        if (this._body instanceof url_search_params_1.URLSearchParams) {
             return this._body.toString();
         }
         if (this._body instanceof ArrayBuffer) {
-            return String.fromCharCode.apply(null, new Uint16Array(/** @type {?} */ (this._body)));
+            return String.fromCharCode.apply(null, new Uint16Array(this._body));
         }
-        if (this._body == null) {
-            return '';
-        }
-        if (typeof this._body === 'object') {
-            return JSON.stringify(this._body, null, 2);
+        if (http_utils_1.isJsObject(this._body)) {
+            return lang_1.Json.stringify(this._body);
         }
         return this._body.toString();
     };
     /**
      * Return the body as an ArrayBuffer
-     * @return {?}
      */
     Body.prototype.arrayBuffer = function () {
         if (this._body instanceof ArrayBuffer) {
-            return (this._body);
+            return this._body;
         }
-        return stringToArrayBuffer(this.text());
+        return http_utils_1.stringToArrayBuffer(this.text());
     };
     /**
-     * Returns the request's body as a Blob, assuming that body exists.
-     * @return {?}
-     */
+      * Returns the request's body as a Blob, assuming that body exists.
+      */
     Body.prototype.blob = function () {
         if (this._body instanceof Blob) {
-            return (this._body);
+            return this._body;
         }
         if (this._body instanceof ArrayBuffer) {
             return new Blob([this._body]);
@@ -72,11 +66,5 @@ export var Body = (function () {
     };
     return Body;
 }());
-function Body_tsickle_Closure_declarations() {
-    /**
-     * \@internal
-     * @type {?}
-     */
-    Body.prototype._body;
-}
+exports.Body = Body;
 //# sourceMappingURL=body.js.map

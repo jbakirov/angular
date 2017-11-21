@@ -5,22 +5,15 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { isPromise } from '../src/util/lang';
-import { Inject, Injectable, OpaqueToken, Optional } from './di';
+"use strict";
+var lang_1 = require('../src/facade/lang');
+var di_1 = require('./di');
 /**
  * A function that will be executed when an application is initialized.
  * @experimental
  */
-export var /** @type {?} */ APP_INITIALIZER = new OpaqueToken('Application Initializer');
-/**
- * A class that reflects the state of running {\@link APP_INITIALIZER}s.
- *
- * \@experimental
- */
-export var ApplicationInitStatus = (function () {
-    /**
-     * @param {?} appInits
-     */
+exports.APP_INITIALIZER = new di_1.OpaqueToken('Application Initializer');
+var ApplicationInitStatus = (function () {
     function ApplicationInitStatus(appInits) {
         var _this = this;
         this._done = false;
@@ -28,7 +21,7 @@ export var ApplicationInitStatus = (function () {
         if (appInits) {
             for (var i = 0; i < appInits.length; i++) {
                 var initResult = appInits[i]();
-                if (isPromise(initResult)) {
+                if (lang_1.isPromise(initResult)) {
                     asyncInitPromises.push(initResult);
                 }
             }
@@ -39,41 +32,24 @@ export var ApplicationInitStatus = (function () {
         }
     }
     Object.defineProperty(ApplicationInitStatus.prototype, "done", {
-        /**
-         * @return {?}
-         */
         get: function () { return this._done; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(ApplicationInitStatus.prototype, "donePromise", {
-        /**
-         * @return {?}
-         */
         get: function () { return this._donePromise; },
         enumerable: true,
         configurable: true
     });
+    /** @nocollapse */
     ApplicationInitStatus.decorators = [
-        { type: Injectable },
+        { type: di_1.Injectable },
     ];
     /** @nocollapse */
-    ApplicationInitStatus.ctorParameters = function () { return [
-        { type: Array, decorators: [{ type: Inject, args: [APP_INITIALIZER,] }, { type: Optional },] },
-    ]; };
+    ApplicationInitStatus.ctorParameters = [
+        { type: Array, decorators: [{ type: di_1.Inject, args: [exports.APP_INITIALIZER,] }, { type: di_1.Optional },] },
+    ];
     return ApplicationInitStatus;
 }());
-function ApplicationInitStatus_tsickle_Closure_declarations() {
-    /** @type {?} */
-    ApplicationInitStatus.decorators;
-    /**
-     * @nocollapse
-     * @type {?}
-     */
-    ApplicationInitStatus.ctorParameters;
-    /** @type {?} */
-    ApplicationInitStatus.prototype._donePromise;
-    /** @type {?} */
-    ApplicationInitStatus.prototype._done;
-}
+exports.ApplicationInitStatus = ApplicationInitStatus;
 //# sourceMappingURL=application_init.js.map

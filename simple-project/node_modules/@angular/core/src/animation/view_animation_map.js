@@ -5,81 +5,56 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { isPresent } from '../facade/lang';
-export var ViewAnimationMap = (function () {
+"use strict";
+var collection_1 = require('../facade/collection');
+var lang_1 = require('../facade/lang');
+var ViewAnimationMap = (function () {
     function ViewAnimationMap() {
-        this._map = new Map();
+        this._map = new collection_1.Map();
         this._allPlayers = [];
     }
-    /**
-     * @param {?} element
-     * @param {?} animationName
-     * @return {?}
-     */
+    Object.defineProperty(ViewAnimationMap.prototype, "length", {
+        get: function () { return this.getAllPlayers().length; },
+        enumerable: true,
+        configurable: true
+    });
     ViewAnimationMap.prototype.find = function (element, animationName) {
-        var /** @type {?} */ playersByAnimation = this._map.get(element);
-        if (isPresent(playersByAnimation)) {
+        var playersByAnimation = this._map.get(element);
+        if (lang_1.isPresent(playersByAnimation)) {
             return playersByAnimation[animationName];
         }
     };
-    /**
-     * @param {?} element
-     * @return {?}
-     */
     ViewAnimationMap.prototype.findAllPlayersByElement = function (element) {
-        var /** @type {?} */ el = this._map.get(element);
-        return el ? Object.keys(el).map(function (k) { return el[k]; }) : [];
+        var el = this._map.get(element);
+        return el ? collection_1.StringMapWrapper.values(el) : [];
     };
-    /**
-     * @param {?} element
-     * @param {?} animationName
-     * @param {?} player
-     * @return {?}
-     */
     ViewAnimationMap.prototype.set = function (element, animationName, player) {
-        var /** @type {?} */ playersByAnimation = this._map.get(element);
-        if (!isPresent(playersByAnimation)) {
+        var playersByAnimation = this._map.get(element);
+        if (!lang_1.isPresent(playersByAnimation)) {
             playersByAnimation = {};
         }
-        var /** @type {?} */ existingEntry = playersByAnimation[animationName];
-        if (isPresent(existingEntry)) {
+        var existingEntry = playersByAnimation[animationName];
+        if (lang_1.isPresent(existingEntry)) {
             this.remove(element, animationName);
         }
         playersByAnimation[animationName] = player;
         this._allPlayers.push(player);
         this._map.set(element, playersByAnimation);
     };
-    /**
-     * @return {?}
-     */
     ViewAnimationMap.prototype.getAllPlayers = function () { return this._allPlayers; };
-    /**
-     * @param {?} element
-     * @param {?} animationName
-     * @param {?=} targetPlayer
-     * @return {?}
-     */
-    ViewAnimationMap.prototype.remove = function (element, animationName, targetPlayer) {
-        if (targetPlayer === void 0) { targetPlayer = null; }
-        var /** @type {?} */ playersByAnimation = this._map.get(element);
-        if (playersByAnimation) {
-            var /** @type {?} */ player = playersByAnimation[animationName];
-            if (!targetPlayer || player === targetPlayer) {
-                delete playersByAnimation[animationName];
-                var /** @type {?} */ index = this._allPlayers.indexOf(player);
-                this._allPlayers.splice(index, 1);
-                if (Object.keys(playersByAnimation).length === 0) {
-                    this._map.delete(element);
-                }
+    ViewAnimationMap.prototype.remove = function (element, animationName) {
+        var playersByAnimation = this._map.get(element);
+        if (lang_1.isPresent(playersByAnimation)) {
+            var player = playersByAnimation[animationName];
+            delete playersByAnimation[animationName];
+            var index = this._allPlayers.indexOf(player);
+            collection_1.ListWrapper.removeAt(this._allPlayers, index);
+            if (collection_1.StringMapWrapper.isEmpty(playersByAnimation)) {
+                this._map.delete(element);
             }
         }
     };
     return ViewAnimationMap;
 }());
-function ViewAnimationMap_tsickle_Closure_declarations() {
-    /** @type {?} */
-    ViewAnimationMap.prototype._map;
-    /** @type {?} */
-    ViewAnimationMap.prototype._allPlayers;
-}
+exports.ViewAnimationMap = ViewAnimationMap;
 //# sourceMappingURL=view_animation_map.js.map

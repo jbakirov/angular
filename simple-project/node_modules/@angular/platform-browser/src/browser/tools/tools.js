@@ -5,9 +5,10 @@
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-import { global } from '../../facade/lang';
-import { AngularTools } from './common_tools';
-var /** @type {?} */ context = (global);
+"use strict";
+var lang_1 = require('../../facade/lang');
+var common_tools_1 = require('./common_tools');
+var context = lang_1.global;
 /**
  * Enabled Angular 2 debug tools that are accessible via your browser's
  * developer console.
@@ -19,23 +20,20 @@ var /** @type {?} */ context = (global);
  * 1. Try the change detection profiler `ng.profiler.timeChangeDetection()`
  *    then hit Enter.
  *
- * \@experimental All debugging apis are currently experimental.
- * @param {?} ref
- * @return {?}
+ * @experimental All debugging apis are currently experimental.
  */
-export function enableDebugTools(ref) {
-    ((Object)).assign(context.ng, new AngularTools(ref));
+function enableDebugTools(ref) {
+    context.ng = new common_tools_1.AngularTools(ref);
     return ref;
 }
+exports.enableDebugTools = enableDebugTools;
 /**
  * Disables Angular 2 tools.
  *
- * \@experimental All debugging apis are currently experimental.
- * @return {?}
+ * @experimental All debugging apis are currently experimental.
  */
-export function disableDebugTools() {
-    if (context.ng) {
-        delete context.ng.profiler;
-    }
+function disableDebugTools() {
+    delete context.ng;
 }
+exports.disableDebugTools = disableDebugTools;
 //# sourceMappingURL=tools.js.map
