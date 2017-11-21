@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Sample of how easy and fast to start hacking with Angular2 and ng2-bootstrap",
   "scripts": {
-    "start": "tsc && concurrently \"tsc -w\" \"lite-server\" ",
+    "start": "concurrently \"npm run tsc:w\" \"npm run lite\" ",
     "lite": "lite-server",
+    "postinstall": "typings install",
     "tsc": "tsc",
-    "tsc:w": "tsc -w"
+    "tsc:w": "tsc -w",
+    "typings": "typings"
   },
   "license": "ISC",
   "dependencies": {
