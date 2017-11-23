@@ -10,7 +10,7 @@ var navbar_component_1 = require("./components/navbar/navbar.component");
 var jumbotron_component_1 = require("./components/jumbotron/jumbotron.component");
 var home_component_1 = require("./components/pages/home.component");
 var about_component_1 = require("./components/pages/about.component");
-var router_1 = require("@anuglar/router");
+var router_1 = require("@angular/router");
 var AppComponent = (function () {
     function AppComponent() {
     }
@@ -20,7 +20,8 @@ AppComponent = __decorate([
     core_1.Component({
         selector: 'my-app',
         template: '<navbar></navbar><jumbotron></jumbotron><router-outlet></router-outlet>',
-        directives: [navbar_component_1.NavBarComponent, jumbotron_component_1.JumbotronComponent, home_component_1.HomeComponent, about_component_1.AboutComponent, router_1.ROUTER_DIRECTIVES]
+        directives: [navbar_component_1.NavBarComponent, jumbotron_component_1.JumbotronComponent, home_component_1.HomeComponent, about_component_1.AboutComponent, router_1.ROUTER_DIRECTIVES],
+        precompile: [home_component_1.HomeComponent, about_component_1.AboutComponent]
     })
 ], AppComponent);
 exports.AppComponent = AppComponent;

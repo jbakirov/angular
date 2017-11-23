@@ -1,6 +1,7 @@
 "use strict";
-var home_component_1 = require(".components/pages/home.component");
-var about_component_1 = require(".components/pages/about.component");
+var router_1 = require("@angular/router");
+var home_component_1 = require("./components/pages/home.component");
+var about_component_1 = require("./components/pages/about.component");
 var routes = [
     {
         path: '',
@@ -12,6 +13,6 @@ var routes = [
     }
 ];
 exports.appRouterProviders = [
-    provideRouter(routes)
+    router_1.provideRouter(routes)
 ];
 //# sourceMappingURL=app.routes.js.map

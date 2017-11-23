@@ -9,6 +9,7 @@
     '@angular':                   'node_modules/@angular',
     'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
     'rxjs':                       'node_modules/rxjs',
+    '@angular/router':            'node_modules/@angular/router',
     // ng2-bootstrap
     'moment': 'node_modules/moment',
     'ng2-bootstrap':              'node_modules/ng2-bootstrap',
@@ -42,6 +43,9 @@
   function packUmd(pkgName) {
     packages['@angular/'+pkgName] = { main: '/bundles/' + pkgName + '.umd.js', defaultExtension: 'js' };
   }
+
+  packages['@angular/router'] = { main: 'index.js', defaultExtension: 'js' };
+
   // Most environments should use UMD; some (Karma) need the individual index files
   var setPackageConfig = System.packageWithIndex ? packIndex : packUmd;
   // Add package entries for angular packages
