@@ -10,6 +10,10 @@ const routes: RouterConfig = [
   {
     path:'about',
     component: AboutComponent
+  },
+  {
+    path:'home',
+    component: HomeComponent
   }
 ];
 
